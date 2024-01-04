@@ -1,0 +1,59 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumu Application</title>
+</head>
+<body>
+    <h1>Bacon Ipsum JSON API Cosummer For Lumu</h1>
+    <p>To use this simple app first we must knwo the params that use the API.</p>
+    <p>Next you can see how to use each parameter:</p>
+    <p class="p-indent"><strong>type:</strong> "all-meat" for meat only or "meat-and-filler" for meat mixed with miscellaneous "lorem ipsum" filler.</p>
+    <p class="p-indent"><strong>paras:</strong> optional number of paragraphs, defaults to 5.</p>
+    <p class="p-indent"><strong>start-with-lorem:</strong>  optional pass 1 to start the first paragraph with "Bacon ipsum dolor sit amet".</p>
+    <br>
+    <p>Now you can set each parameter to use this little app.</p>
+
+    <label for="type"><strong>Type:</strong></label>
+    <select id="type" name="type">
+        <option value="all-meat">all-meat</option>
+        <option value="meat-and-filler">meat-and-filler</option>
+    </select>
+    <br><br>
+    <label for="paras"><strong>paras:</strong></label>
+    <input type="number" id="paras" name="paras" min="1" max="15" placeholder="Enter a valid number betweem 1 and 15.">
+    <br><br>
+    <label><strong>start-with-lorem:</strong></label><input type="checkbox" name="lorem" value="1"> 
+    <br><br>
+    <button id="submitButton" type="button" action="/generate-pdf" method="post">Generate PDF</button>
+
+    <script>
+        document.getElementById('submitButton').addEventListener('click', function() {
+            const selectElement = document.getElementById('type');
+            const selectedType = Array.from(selectElement.selectedOptions).map(option => option.value);
+            const selectedParas = document.getElementById('paras').value;
+            const checkboxes = document.querySelectorAll('input[name="lorem"]:checked');
+            const selectedLorem = Array.from(checkboxes).map(checkbox => checkbox.value);
+
+            fetch('/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ type: selectedType, paras:selectedParas, lorem: selectedLorem }),
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+            document.getElementById('submitButton').addEventListener('click', function() {
+                const filename = 'report.pdf';
+                setTimeout(() => {
+                    window.location.href = `/download/${filename}`;
+                }, 4000);
+            });
+    </script>
+</body>
